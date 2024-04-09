@@ -50,6 +50,10 @@ export const initTodo = () => {
   const closeDialog = document.getElementById("cancel-project");
   const projTitle = document.getElementById("projTitle");
   const projDesc = document.getElementById("projDesc");
+  const addTask = document.getElementById("add-task");
+
+  let projects = [];
+  let currentProject = null;
 
   class Project {
     constructor(name, description) {
@@ -59,8 +63,32 @@ export const initTodo = () => {
     }
   }
 
+  class Task {
+    constructor(name, description, dueDate, priority) {
+      this.name = name;
+      this.description = description;
+      this.dueDate = dueDate;
+      this.priority = priority;
+    }
+  }
+
   addProject.addEventListener("click", () => {
     addProjectDialog.showModal();
+  });
+
+  addTask.addEventListener("click", () => {
+    if (currentProject === null) {
+      alert("Please select a project.");
+      return;
+    }
+    const task = new Task(
+      "Task Name",
+      "Task Description",
+      "Due Date",
+      "Priority"
+    );
+    currentProject.tasks.push(task);
+    console.log(currentProject);
   });
 
   dialogAdd.addEventListener("click", (e) => {
@@ -69,6 +97,8 @@ export const initTodo = () => {
     const projectDescription =
       document.getElementById("projectDescription").value;
     const project = new Project(projectName, projectDescription);
+    projects.push(project);
+    currentProject = project;
     console.log(project);
 
     const projectElement = document.createElement("li");
@@ -104,10 +134,10 @@ export const initTodo = () => {
     projectsList.appendChild(projectElement);
 
     projectElement.addEventListener("click", () => {
+      currentProject = project;
       projTitle.textContent = project.name;
       projDesc.textContent = project.description;
     });
-
     addProjectDialog.close();
   });
 
