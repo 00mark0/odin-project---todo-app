@@ -26,14 +26,34 @@ export const initTodo = () => {
                 </nav>
         </header>
         <main>
-            <div class="tasks">
+            <div class="proj">
                 <h2 id="projTitle"></h2>
                 <p id="projDesc"></p>
+                </div>
+                <div class="task-content">
                 <ul id="tasks-list">
 
                 </ul>
-                <button id="add-task"><i class="fas fa-plus"></i> Add a Task</button> 
-            </div> 
+                </div>    
+            <button id="add-task"><i class="fas fa-plus"></i> Add a Task</button> 
+            <dialog id="add-task-dialog">
+                <form id="add-task-form">
+                    <label for="taskName">Task Name</label>
+                    <input type="text" id="taskName" name="taskName">
+                    <label for="taskDescription">Task Description</label>
+                    <input type="text" id="taskDescription" name="taskDescription"></input>
+                    <label for="dueDate">Due Date</label>
+                    <input type="date" id="dueDate" name="dueDate"></input>
+                    <label for="priority">Priority</label>
+                    <select id="priority" name="priority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <button id="dialogAddTask" type="submit">Add Task</button>
+                    <button id="cancel-task">Cancel</button>
+                </form> 
+            </dialog> 
         </main>
     </div>
 `;
@@ -50,7 +70,11 @@ export const initTodo = () => {
   const closeDialog = document.getElementById("cancel-project");
   const projTitle = document.getElementById("projTitle");
   const projDesc = document.getElementById("projDesc");
+  const tasksList = document.getElementById("tasks-list");
   const addTask = document.getElementById("add-task");
+  const addTaskDialog = document.getElementById("add-task-dialog");
+  const dialogAddTask = document.getElementById("dialogAddTask");
+  const closeTaskDialog = document.getElementById("cancel-task");
 
   let projects = [];
   let currentProject = null;
@@ -72,6 +96,55 @@ export const initTodo = () => {
     }
   }
 
+  const createTaskElement = (task) => {
+    const taskElement = document.createElement("li");
+    taskElement.classList.add("taskElement");
+
+    const taskElementCheckbox = document.createElement("input");
+    taskElementCheckbox.setAttribute("type", "checkbox");
+    taskElement.appendChild(taskElementCheckbox);
+
+    const taskName = document.createElement("span");
+    taskName.textContent = task.name;
+    taskElement.appendChild(taskName);
+
+    const taskDescription = document.createElement("span");
+    taskDescription.textContent = task.description;
+    taskElement.appendChild(taskDescription);
+
+    const taskDueDate = document.createElement("span");
+    taskDueDate.textContent = task.dueDate;
+    taskElement.appendChild(taskDueDate);
+
+    const taskPriority = document.createElement("span");
+    taskPriority.textContent = task.priority;
+    taskElement.appendChild(taskPriority);
+
+    const taskElementEdit = document.createElement("button");
+    const editIconHTML = `<i class="fas fa-edit"></i>`;
+    const cleanEditIconHTML = DOMPurify.sanitize(editIconHTML);
+    taskElementEdit.innerHTML = cleanEditIconHTML;
+    taskElement.appendChild(taskElementEdit);
+
+    const taskElementDelete = document.createElement("button");
+    const deleteIconHTML = `<i class="fas fa-trash"></i>`;
+    const cleanDeleteIconHTML = DOMPurify.sanitize(deleteIconHTML);
+    taskElementDelete.innerHTML = cleanDeleteIconHTML;
+
+    taskElementDelete.addEventListener("click", () => {
+      const taskIndex = currentProject.tasks.indexOf(task);
+
+      if (taskIndex !== -1) {
+        currentProject.tasks.splice(taskIndex, 1);
+      }
+
+      taskElement.remove();
+    });
+
+    taskElement.appendChild(taskElementDelete);
+    tasksList.appendChild(taskElement);
+  };
+
   addProject.addEventListener("click", () => {
     addProjectDialog.showModal();
   });
@@ -81,14 +154,39 @@ export const initTodo = () => {
       alert("Please select a project.");
       return;
     }
+    addTaskDialog.showModal();
+  });
+
+  dialogAddTask.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const taskName = document.getElementById("taskName");
+    const taskDescription = document.getElementById("taskDescription");
+    const dueDate = document.getElementById("dueDate");
+    const priority = document.getElementById("priority");
+
     const task = new Task(
-      "Task Name",
-      "Task Description",
-      "Due Date",
-      "Priority"
+      taskName.value,
+      taskDescription.value,
+      dueDate.value,
+      priority.value
     );
+
     currentProject.tasks.push(task);
-    console.log(currentProject);
+
+    if (taskName.value === "") {
+      alert("Please enter a task name.");
+      return;
+    }
+
+    createTaskElement(task);
+
+    addTaskDialog.close();
+  });
+
+  closeTaskDialog.addEventListener("click", (e) => {
+    e.preventDefault();
+    addTaskDialog.close();
   });
 
   dialogAdd.addEventListener("click", (e) => {
@@ -137,6 +235,12 @@ export const initTodo = () => {
       currentProject = project;
       projTitle.textContent = project.name;
       projDesc.textContent = project.description;
+
+      tasksList.innerHTML = "";
+
+      project.tasks.forEach((task) => {
+        createTaskElement(task);
+      });
     });
     addProjectDialog.close();
   });
