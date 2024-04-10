@@ -172,16 +172,15 @@ export const initTodo = () => {
     if (projectName === "") {
       alert("Please enter a project name.");
       return;
-    } else if (projectDescription === "") {
-      alert("Please enter a project description.");
-      return;
-    } else {
-      projectElementDelete.addEventListener("click", () => {
-        projectElement.remove();
-        projTitle.textContent = "";
-        projDesc.textContent = "";
-      });
     }
+
+    projectElementDelete.addEventListener("click", (e) => {
+      e.stopPropagation();
+      projectElement.remove();
+      projTitle.textContent = "";
+      projDesc.textContent = "";
+      tasksList.innerHTML = "";
+    });
 
     projectElement.appendChild(projectElementDelete);
     projectsList.appendChild(projectElement);
