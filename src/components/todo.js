@@ -1,6 +1,7 @@
 import DOMPurify from "dompurify";
 import { cleanTodoPage } from "./todoHTML";
 import { Project, Task } from "./classes";
+import { differenceInDays, formatDistanceToNow } from "date-fns";
 
 export const initTodo = () => {
   const content = document.getElementById("content");
@@ -32,6 +33,11 @@ export const initTodo = () => {
     taskElementCheckbox.setAttribute("type", "checkbox");
     taskElement.appendChild(taskElementCheckbox);
 
+    taskElementCheckbox.addEventListener("change", () => {
+      task.completed = taskElementCheckbox.checked;
+      saveProjects();
+    });
+
     const taskName = document.createElement("span");
     taskName.textContent = task.name;
     taskElement.appendChild(taskName);
@@ -41,7 +47,24 @@ export const initTodo = () => {
     taskElement.appendChild(taskDescription);
 
     const taskDueDate = document.createElement("span");
-    taskDueDate.textContent = task.dueDate;
+    const dueDate = new Date(task.dueDate);
+    const today = new Date();
+    dueDate.setHours(
+      today.getHours(),
+      today.getMinutes(),
+      today.getSeconds(),
+      today.getMilliseconds()
+    );
+    const difference = differenceInDays(dueDate, today);
+
+    if (difference > 0) {
+      taskDueDate.textContent = `${formatDistanceToNow(dueDate)} left`;
+    } else if (difference < 0) {
+      taskDueDate.textContent = `${formatDistanceToNow(dueDate)} ago`;
+    } else {
+      taskDueDate.textContent = "Due today";
+    }
+
     taskElement.appendChild(taskDueDate);
 
     const taskPriority = document.createElement("span");
@@ -134,6 +157,7 @@ export const initTodo = () => {
       createTaskElement(task);
       saveProjects();
     }
+
     taskBeingEdited = null;
     addTaskDialog.close();
   });
