@@ -4,7 +4,7 @@ const todoPage = `
     <div class="todo-container">
         <header>
             <div class="todo-title">
-                <h1>Todo App</h1>
+                <h1>To-do App</h1>
             </div>
                 <h2>Projects</h2> 
                 <nav>

@@ -2,6 +2,7 @@ import DOMPurify from "dompurify";
 import { cleanTodoPage } from "./todoHTML";
 import { Project, Task } from "./classes";
 import { differenceInDays, formatDistanceToNow } from "date-fns";
+import "../styles/main.css";
 
 export const initTodo = () => {
   const content = document.getElementById("content");
@@ -218,6 +219,8 @@ export const initTodo = () => {
       projTitle.textContent = "";
       projDesc.textContent = "";
       tasksList.innerHTML = "";
+
+      currentProject = null;
     });
 
     projectElement.appendChild(projectElementDelete);
@@ -276,6 +279,8 @@ export const initTodo = () => {
           projTitle.textContent = "";
           projDesc.textContent = "";
           tasksList.innerHTML = "";
+
+          currentProject = null;
         });
 
         projectElement.appendChild(projectElementDelete);

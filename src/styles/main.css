@@ -1,0 +1,82 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.todo-container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  min-height: 100vh;
+  font-family: "Roboto-Mono", monospace;
+  color: #442524;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1.5rem;
+  align-items: flex-start;
+  background-color: #c6cdd6;
+}
+
+.todo-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.todo-title h1 {
+  font-family: "Shadows Into Light", cursive;
+}
+
+header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+header nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+header li {
+  list-style: none;
+  padding: 0.3rem 5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #d1c7cd;
+  border-bottom: 2px solid #442524;
+}
+
+header li:hover {
+  background-color: #c6cdd6;
+}
+
+header span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: "Shadows Into Light", cursive;
+  letter-spacing: 3px;
+}
+
+header button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 50%;
+  background-color: #442524;
+  color: #c6cdd6;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+header button:hover {
+  transform: scale(1.1);
+}
