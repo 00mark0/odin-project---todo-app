@@ -67,16 +67,28 @@ export const initTodo = () => {
 
     if (difference > 0) {
       taskDueDate.textContent = `${formatDistanceToNow(dueDate)} left`;
+      taskDueDate.style.color = "green";
     } else if (difference < 0) {
       taskDueDate.textContent = `${formatDistanceToNow(dueDate)} ago`;
+      taskDueDate.style.color = "grey";
     } else {
       taskDueDate.textContent = "Due today";
+      taskDueDate.style.color = "red";
     }
 
     taskElement.appendChild(taskDueDate);
 
     const taskPriority = document.createElement("span");
     taskPriority.textContent = task.priority;
+
+    if (task.priority === "low") {
+      taskPriority.style.color = "green";
+    } else if (task.priority === "medium") {
+      taskPriority.style.color = "orange";
+    } else {
+      taskPriority.style.color = "red";
+    }
+
     taskElement.appendChild(taskPriority);
 
     const taskElementEdit = document.createElement("button");
