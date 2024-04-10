@@ -31,10 +31,17 @@ export const initTodo = () => {
 
     const taskElementCheckbox = document.createElement("input");
     taskElementCheckbox.setAttribute("type", "checkbox");
+    taskElementCheckbox.setAttribute("id", task.id);
     taskElement.appendChild(taskElementCheckbox);
+
+    const savedCheckboxState = localStorage.getItem(task.id);
+    if (savedCheckboxState !== null) {
+      taskElementCheckbox.checked = savedCheckboxState === "true";
+    }
 
     taskElementCheckbox.addEventListener("change", () => {
       task.completed = taskElementCheckbox.checked;
+      localStorage.setItem(task.id, taskElementCheckbox.checked);
       saveProjects();
     });
 

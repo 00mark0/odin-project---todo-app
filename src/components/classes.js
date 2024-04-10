@@ -12,5 +12,6 @@ export class Task {
     this.description = description;
     this.dueDate = dueDate;
     this.priority = priority;
+    this.id = Date.now().toString();
   }
 }
