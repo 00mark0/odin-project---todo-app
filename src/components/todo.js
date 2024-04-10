@@ -19,7 +19,7 @@ export const initTodo = () => {
   const dialogAddTask = document.getElementById("dialogAddTask");
   const closeTaskDialog = document.getElementById("cancel-task");
 
-  let projects = [];
+  let projects = JSON.parse(localStorage.getItem("projects")) || [];
   let currentProject = null;
 
   let taskBeingEdited = null;
@@ -76,6 +76,7 @@ export const initTodo = () => {
 
       if (taskIndex !== -1) {
         currentProject.tasks.splice(taskIndex, 1);
+        saveProjects();
       }
 
       taskElement.remove();
@@ -111,7 +112,7 @@ export const initTodo = () => {
       taskBeingEdited.dueDate = dueDate.value;
       taskBeingEdited.priority = priority.value;
 
-      //taskBeingEdited = null;
+      saveProjects();
       tasksList.innerHTML = "";
       currentProject.tasks.forEach(createTaskElement);
       dialogAddTask.textContent = "Add Task";
@@ -131,6 +132,7 @@ export const initTodo = () => {
       }
 
       createTaskElement(task);
+      saveProjects();
     }
     taskBeingEdited = null;
     addTaskDialog.close();
@@ -152,7 +154,7 @@ export const initTodo = () => {
     const project = new Project(projectName, projectDescription);
     projects.push(project);
     currentProject = project;
-    console.log(project);
+    saveProjects();
 
     const projectElement = document.createElement("li");
     projectElement.classList.add("projectElement");
@@ -176,6 +178,11 @@ export const initTodo = () => {
 
     projectElementDelete.addEventListener("click", (e) => {
       e.stopPropagation();
+      const projectIndex = projects.indexOf(project);
+      if (projectIndex !== -1) {
+        projects.splice(projectIndex, 1);
+        saveProjects();
+      }
       projectElement.remove();
       projTitle.textContent = "";
       projDesc.textContent = "";
@@ -202,5 +209,59 @@ export const initTodo = () => {
   closeDialog.addEventListener("click", (e) => {
     e.preventDefault();
     addProjectDialog.close();
+  });
+
+  const saveProjects = () => {
+    localStorage.setItem("projects", JSON.stringify(projects));
+  };
+
+  window.addEventListener("load", () => {
+    if (localStorage.getItem("projects")) {
+      projects = JSON.parse(localStorage.getItem("projects"));
+      projects.forEach((project) => {
+        const projectElement = document.createElement("li");
+        projectElement.classList.add("projectElement");
+        const projectTitle = document.createElement("span");
+        projectTitle.textContent = project.name;
+        projectElement.appendChild(projectTitle);
+
+        const projectElementDelete = document.createElement("button");
+        const deleteIconHTML = `<i class="fas fa-trash"></i>`;
+        const cleanDeleteIconHTML = DOMPurify.sanitize(deleteIconHTML);
+        projectElementDelete.innerHTML = cleanDeleteIconHTML;
+
+        projTitle.textContent = project.name;
+
+        projDesc.textContent = project.description;
+
+        projectElementDelete.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const projectIndex = projects.indexOf(project);
+          if (projectIndex !== -1) {
+            projects.splice(projectIndex, 1);
+            saveProjects();
+          }
+          projectElement.remove();
+          projTitle.textContent = "";
+          projDesc.textContent = "";
+          tasksList.innerHTML = "";
+        });
+
+        projectElement.appendChild(projectElementDelete);
+        projectsList.appendChild(projectElement);
+
+        projectElement.addEventListener("click", () => {
+          currentProject = project;
+          projTitle.textContent = project.name;
+          projDesc.textContent = project.description;
+
+          tasksList.innerHTML = "";
+
+          project.tasks.forEach((task) => {
+            createTaskElement(task);
+          });
+        });
+      });
+    }
   });
 };
